@@ -1,0 +1,10 @@
+MAGE ?= mage
+
+$(MAGE): magefile.go $(wildcard .mage/*.go)
+	GO111MODULE=on go install github.com/magefile/mage
+	GO111MODULE=on go run github.com/magefile/mage -compile $(MAGE)
+
+.PHONY: init
+init: $(MAGE)
+	@$(MAGE) init
+	@echo "Run \"./mage -l\" for a list of build targets

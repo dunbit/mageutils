@@ -1,2 +1,3 @@
 # mageutils
-Magefile utils
+
+Helpers for [Mage](https://magefile.org/)
