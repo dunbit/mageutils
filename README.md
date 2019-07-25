@@ -1,0 +1,2 @@
+# mageutils
+Magefile utils
