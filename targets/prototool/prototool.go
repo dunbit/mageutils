@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path"
 
+	"github.com/dunbit/mageutils/targets/dir"
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 )
@@ -11,7 +12,7 @@ import (
 var prototoolCmd = sh.RunCmd("prototool")
 
 func init() {
-	dirs.Add("ProtoDir", path.Join(dirs.Get("RootDir"), "proto"))
+	dir.Add("ProtoDir", path.Join(dir.Get("RootDir"), "proto"))
 }
 
 // Prototool ...
@@ -32,15 +33,15 @@ func (Prototool) Info() error {
 
 // Run ...
 func (Prototool) Run() error {
-	return prototoolCmd("all", dirs.GetDefault("ProtoDir", "./"))
+	return prototoolCmd("all", dir.GetDefault("ProtoDir", "./"))
 }
 
 // BreakCheck ...
 func (Prototool) BreakCheck() error {
-	return prototoolCmd("break", "check", "-f", path.Join(dirs.GetDefault("ProtoDir", "./"), "prototool.lock"), dirs.GetDefault("ProtoDir", "./"))
+	return prototoolCmd("break", "check", "-f", path.Join(dir.GetDefault("ProtoDir", "./"), "prototool.lock"), dir.GetDefault("ProtoDir", "./"))
 }
 
 // BreakUpdate ...
 func (Prototool) BreakUpdate() error {
-	return prototoolCmd("break", "descriptor-set", "-o", path.Join(dirs.GetDefault("ProtoDir", "./"), "prototool.lock"), dirs.GetDefault("ProtoDir", "./"))
+	return prototoolCmd("break", "descriptor-set", "-o", path.Join(dir.GetDefault("ProtoDir", "./"), "prototool.lock"), dir.GetDefault("ProtoDir", "./"))
 }

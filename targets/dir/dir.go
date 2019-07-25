@@ -1,4 +1,4 @@
-package targets
+package dir
 
 import (
 	"fmt"
@@ -17,7 +17,8 @@ func newDirObject() *dirObject {
 	}
 }
 
-func (d *dirObject) Get(ref string) string {
+// Get ...
+func Get(ref string) string {
 	if ref == "RootDir" {
 		wd, err := os.Getwd()
 		if err != nil {
@@ -25,22 +26,24 @@ func (d *dirObject) Get(ref string) string {
 		}
 		return wd
 	}
-	if val, ok := d.Map[ref]; ok {
+	if val, ok := dirs.Map[ref]; ok {
 		return val
 	}
 	return ""
 }
 
-func (d *dirObject) GetDefault(ref string, defaultPath string) string {
-	val := d.Get(ref)
+// GetDefault ...
+func GetDefault(ref string, defaultPath string) string {
+	val := Get(ref)
 	if val == "" {
 		return defaultPath
 	}
 	return val
 }
 
-func (d *dirObject) Add(ref string, path string) {
-	d.Map[ref] = path
+// Add ...
+func Add(ref string, path string) {
+	dirs.Map[ref] = path
 }
 
 var dirs = newDirObject()
@@ -51,7 +54,7 @@ type Dir mg.Namespace
 // Info ...
 func (Dir) Info() {
 	fmt.Println("### Dir Info ###")
-	root := dirs.Get("RootDir")
+	root := Get("RootDir")
 	fmt.Println("Ref:", "RootDir", "\tPath:", root)
 	for key, value := range dirs.Map {
 		fmt.Println("Ref:", key, "\tPath:", value)

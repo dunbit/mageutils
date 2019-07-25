@@ -1,4 +1,4 @@
-package targets
+package dep
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"path"
 
 	"github.com/dunbit/mageutils/pkg/dep"
+	"github.com/dunbit/mageutils/targets/dir"
 	"github.com/magefile/mage/mg"
 )
 
@@ -14,7 +15,7 @@ type Deps mg.Namespace
 
 // Info ...
 func (Deps) Info() error {
-	file, err := os.Open(path.Join(dirs.Get("RootDir"), "deps.yaml"))
+	file, err := os.Open(path.Join(dir.Get("RootDir"), "deps.yaml"))
 	if err != nil {
 		return err
 	}
