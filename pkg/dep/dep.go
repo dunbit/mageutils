@@ -13,9 +13,8 @@ import (
 
 // Error definitions
 var (
-	ErrInvalidRepo       = errors.New("Git invalid repo path")
-	ErrInvalidOut        = errors.New("Git invalid out path")
-	ErrInvalidBranchHash = errors.New("Git branch and hash cannot be used togheter")
+	ErrInvalidRepo = errors.New("Git invalid repo path")
+	ErrInvalidOut  = errors.New("Git invalid out path")
 )
 
 var gitCmd = sh.RunCmd("git")
@@ -71,27 +70,27 @@ func (g Git) Validate() error {
 		return ErrInvalidOut
 	}
 
-	if g.Branch != "" && g.Hash != "" {
-		return ErrInvalidBranchHash
-	}
-
 	return nil
 }
 
 // Ensure ...
 func (g Git) Ensure() error {
-	info, err := os.Stat(g.Out)
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
+	info, err := os.Stat(path.Join(wd, g.Out))
 	if os.IsNotExist(err) {
 		err := g.clone()
 		if err != nil {
 			return err
 		}
-	}
-	if err != nil {
+	} else if err != nil {
 		return err
 	}
 
-	if !info.IsDir() {
+	if info != nil && !info.IsDir() {
 		return errors.New("expected path to be a dir, but got file")
 	}
 
@@ -131,10 +130,16 @@ func (g Git) clone() error {
 }
 
 func (g Git) checkout() (rerr error) {
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
 	defer func() {
-		rerr = os.Chdir("..")
+		rerr = os.Chdir(wd)
 	}()
-	err := os.Chdir(g.Out)
+
+	err = os.Chdir(path.Join(wd, g.Out))
 	if err != nil {
 		return err
 	}
@@ -142,6 +147,13 @@ func (g Git) checkout() (rerr error) {
 	err = gitCmd("diff", "--exit-code")
 	if err != nil {
 		return err
+	}
+
+	if g.Hash != "" {
+		err = gitCmd("reset", "--hard", g.Hash)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

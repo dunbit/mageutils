@@ -54,3 +54,25 @@ func (Deps) Example() {
 	fmt.Println("    single: true")
 	fmt.Println("    depth: 1")
 }
+
+// Ensure ...
+func (Deps) Ensure() error {
+	file, err := os.Open(path.Join(dir.Get("RootDir"), "deps.yaml"))
+	if err != nil {
+		return err
+	}
+
+	config, err := dep.ReadConfig(file)
+	if err != nil {
+		return err
+	}
+
+	for _, git := range config.Git {
+		err = git.Ensure()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
